@@ -1,0 +1,74 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import getBaseUrl from "../../../utils/baseUrl";
+
+export async function getStaticPaths() {
+    return [
+        { params: { rep: "1" } },
+        { params: { rep: "3" } },
+        { params: { rep: "5" } },
+        { params: { rep: "7" } },
+        { params: { rep: "8" } },
+        { params: { rep: "13" } },
+        { params: { rep: "14" } },
+        { params: { rep: "15" } },
+        { params: { rep: "22" } },
+        { params: { rep: "23" } },
+        { params: { rep: "25" } },
+        { params: { rep: "28" } },
+        { params: { rep: "29" } },
+        { params: { rep: "41" } },
+    ];
+}
+
+const response = await fetch(`${getBaseUrl()}/api/trpc/kits`);
+const data = await response.json();
+
+const allKits = data?.result?.data?.json;
+
+const { rep } = Astro.params;
+
+const kits = allKits.filter((kit) => kit.rep === `Rep${rep}`);
+
+interface RepData {
+    [key: string]: any;
+    territories: string[];
+}
+
+const renderKey = (key: string, map: RepData) => {
+    switch (key) {
+        case "active": {
+            return map[key] ? "True" : "False";
+        }
+        case "owens_minor": {
+            return map[key] ? "True" : "False";
+        }
+        case "territories": {
+            return map[key].join(", ");
+        }
+        case "start_date": {
+            return map[key] ? map[key].split("T")[0] : "";
+        }
+        case "territory_base": {
+            // format string as money $###.##
+            return map[key]
+                ? map[key].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                : "";
+        }
+        default: {
+            return map[key];
+        }
+    }
+};
+---
+
+<Layout title="kits">
+    <div
+        class="grid place-items-center w-100vw font-extrabold text-4xl underline"
+    >
+        Custom Kits
+    </div>
+    <div class="px-4 sm:px-6 lg:px-8">
+        <pre>{JSON.stringify(kits, null, 2)}</pre>
+    </div>
+</Layout>

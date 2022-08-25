@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model kits {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Multiple data types found: String: 0.9%, DateTime (Date): 99.1% out of 701 sampled entries
+  created_at Json
+  item       String @unique(map: "item_idx")
+  rate       Float
+  rep        String
+}
+
+model reps {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  active         Boolean
+  email          String
+  name           String
+  owens_minor    Boolean
+  start_date     DateTime @db.Date
+  territories    String[]
+  territory_base Float
+  territory_id   String
+  territory_name String
+}
