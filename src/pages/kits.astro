@@ -1,0 +1,51 @@
+---
+import Layout from "../layouts/Layout.astro";
+import getBaseUrl from "../../utils/baseUrl";
+
+const response = await fetch(`${getBaseUrl()}/api/trpc/kits`);
+const data = await response.json();
+
+const kits = data?.result?.data?.json;
+
+interface RepData {
+    [key: string]: any;
+    territories: string[];
+}
+
+const renderKey = (key: string, map: RepData) => {
+    switch (key) {
+        case "active": {
+            return map[key] ? "True" : "False";
+        }
+        case "owens_minor": {
+            return map[key] ? "True" : "False";
+        }
+        case "territories": {
+            return map[key].join(", ");
+        }
+        case "start_date": {
+            return map[key] ? map[key].split("T")[0] : "";
+        }
+        case "territory_base": {
+            // format string as money $###.##
+            return map[key]
+                ? map[key].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                : "";
+        }
+        default: {
+            return map[key];
+        }
+    }
+};
+---
+
+<Layout title="kits">
+    <div
+        class="grid place-items-center w-100vw font-extrabold text-4xl underline"
+    >
+        Custom Kits
+    </div>
+    <div class="px-4 sm:px-6 lg:px-8">
+        <pre>{JSON.stringify(kits, null, 2)}</pre>
+    </div>
+</Layout>

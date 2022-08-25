@@ -1,0 +1,30 @@
+---
+const { pathname } = Astro.url;
+---
+
+<nav class="w-full pt-2">
+    <ul class="flex flex-row justify-between px-4 text-xs">
+        <li>
+            <a class="hover:underline hover:font-semibold" href="/"
+                >go to home</a
+            >
+        </li>
+        <li class="flex flex-row space-x-4">
+            {
+                (pathname === "/") ? (
+                    <a class="hover:underline hover:font-semibold" href="/reps"
+                        >go to reps</a
+                    >
+                    <a class="hover:underline hover:font-semibold" href="/kits"
+                        >go to kits</a
+                    >) : 
+                        (pathname === "/reps") ? (<a class="hover:underline hover:font-semibold" href="/kits"
+                            >go to kits</a
+                        >) : (
+                            <a class="hover:underline hover:font-semibold" href="/reps"
+                                >go to reps</a
+                            >)
+            }
+        </li>
+    </ul>
+</nav>

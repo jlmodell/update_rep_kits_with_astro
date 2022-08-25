@@ -1,0 +1,96 @@
+---
+import Layout from "../layouts/Layout.astro";
+import getBaseUrl from "../../utils/baseUrl";
+
+const response = await fetch(`${getBaseUrl()}/api/trpc/reps`);
+const data = await response.json();
+
+const reps = data?.result?.data?.json;
+
+interface RepData {
+    [key: string]: any;
+    territories: string[];
+}
+
+const renderKey = (key: string, map: RepData) => {
+    switch (key) {
+        case "active": {
+            return map[key] ? "True" : "False";
+        }
+        case "owens_minor": {
+            return map[key] ? "True" : "False";
+        }
+        case "territories": {
+            return map[key].join(", ");
+        }
+        case "start_date": {
+            return map[key] ? map[key].split("T")[0] : "";
+        }
+        case "territory_base": {
+            // format string as money $###.##
+            return map[key]
+                ? map[key].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                : "";
+        }
+        default: {
+            return map[key];
+        }
+    }
+};
+---
+
+<Layout title="sales reps">
+    <div
+        class="grid place-items-center w-100vw font-extrabold text-4xl underline"
+    >
+        Sales Reps
+    </div>
+    <div class="px-4 sm:px-6 lg:px-8">
+        {
+            reps &&
+                reps.map((rep) => {
+                    return (
+                        <details>
+                            <summary>
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            {Object.keys(rep).map((key) => {
+                                                if (key === "id") return null;
+                                                else
+                                                    return (
+                                                        <th
+                                                            scope="col"
+                                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                        >
+                                                            {key}
+                                                        </th>
+                                                    );
+                                            })}
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        <tr>
+                                            {Object.keys(rep).map((key) => {
+                                                if (key === "id") return null;
+                                                else
+                                                    return (
+                                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                            {renderKey(
+                                                                key,
+                                                                rep
+                                                            )}
+                                                        </td>
+                                                    );
+                                            })}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </summary>
+                            <pre>{JSON.stringify(rep, null, 2)}</pre>
+                        </details>
+                    );
+                })
+        }
+    </div>
+</Layout>
